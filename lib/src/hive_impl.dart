@@ -20,8 +20,7 @@ import 'backend/storage_backend.dart';
 
 /// Not part of public API
 class HiveImpl extends TypeRegistryImpl implements HiveInterface {
-  static final BackendManagerInterface _defaultBackendManager =
-      BackendManager.select();
+  static final BackendManagerInterface _defaultBackendManager = BackendManager.select();
 
   final _boxes = HashMap<String, BoxBaseImpl>();
   final _openingBoxes = HashMap<String, Future>();
@@ -39,8 +38,7 @@ class HiveImpl extends TypeRegistryImpl implements HiveInterface {
 
   /// either returns the preferred [BackendManagerInterface] or the
   /// platform default fallback
-  BackendManagerInterface get _manager =>
-      _managerOverride ?? _defaultBackendManager;
+  BackendManagerInterface get _manager => _managerOverride ?? _defaultBackendManager;
 
   void _registerDefaultAdapters() {
     registerAdapter(DateTimeWithTimezoneAdapter(), internal: true);
@@ -51,8 +49,7 @@ class HiveImpl extends TypeRegistryImpl implements HiveInterface {
   @override
   void init(
     String? path, {
-    HiveStorageBackendPreference backendPreference =
-        HiveStorageBackendPreference.native,
+    HiveStorageBackendPreference backendPreference = HiveStorageBackendPreference.native,
   }) {
     homePath = path;
     _managerOverride = BackendManager.select(backendPreference);
@@ -70,8 +67,7 @@ class HiveImpl extends TypeRegistryImpl implements HiveInterface {
     String? collection,
   ) async {
     assert(path == null || bytes == null);
-    assert(name.length <= 255 && name.isAscii,
-        'Box names need to be ASCII Strings with a max length of 255.');
+    assert(name.length <= 255 && name.isAscii, 'Box names need to be ASCII Strings with a max length of 255.');
     name = name.toLowerCase();
     if (isBoxOpen(name)) {
       if (lazy) {
@@ -98,8 +94,7 @@ class HiveImpl extends TypeRegistryImpl implements HiveInterface {
         if (bytes != null) {
           backend = StorageBackendMemory(bytes, cipher);
         } else {
-          backend = await _manager.open(
-              name, path ?? homePath, recovery, cipher, collection);
+          backend = await _manager.open(name, path ?? homePath, recovery, cipher, collection);
         }
 
         if (lazy) {
@@ -134,13 +129,8 @@ class HiveImpl extends TypeRegistryImpl implements HiveInterface {
     String? path,
     Uint8List? bytes,
     String? collection,
-    @Deprecated('Use encryptionCipher instead') List<int>? encryptionKey,
   }) async {
-    if (encryptionKey != null) {
-      encryptionCipher = HiveAesCipher(encryptionKey);
-    }
-    return await _openBox<E>(name, false, encryptionCipher, keyComparator,
-        compactionStrategy, crashRecovery, path, bytes, collection) as Box<E>;
+    return await _openBox<E>(name, false, encryptionCipher, keyComparator, compactionStrategy, crashRecovery, path, bytes, collection) as Box<E>;
   }
 
   @override
@@ -152,21 +142,8 @@ class HiveImpl extends TypeRegistryImpl implements HiveInterface {
     bool crashRecovery = true,
     String? path,
     String? collection,
-    @Deprecated('Use encryptionCipher instead') List<int>? encryptionKey,
   }) async {
-    if (encryptionKey != null) {
-      encryptionCipher = HiveAesCipher(encryptionKey);
-    }
-    return await _openBox<E>(
-        name,
-        true,
-        encryptionCipher,
-        keyComparator,
-        compactionStrategy,
-        crashRecovery,
-        path,
-        null,
-        collection) as LazyBox<E>;
+    return await _openBox<E>(name, true, encryptionCipher, keyComparator, compactionStrategy, crashRecovery, path, null, collection) as LazyBox<E>;
   }
 
   BoxBase<E> _getBoxInternal<E>(String name, [bool? lazy]) {
@@ -176,9 +153,7 @@ class HiveImpl extends TypeRegistryImpl implements HiveInterface {
       if ((lazy == null || box.lazy == lazy) && box.valueType == E) {
         return box as BoxBase<E>;
       } else {
-        var typeName = box is LazyBox
-            ? 'LazyBox<${box.valueType}>'
-            : 'Box<${box.valueType}>';
+        var typeName = box is LazyBox ? 'LazyBox<${box.valueType}>' : 'Box<${box.valueType}>';
         throw HiveError('The box "$lowerCaseName" is already open '
             'and of type $typeName.');
       }
@@ -197,8 +172,7 @@ class HiveImpl extends TypeRegistryImpl implements HiveInterface {
   Box<E> box<E>(String name) => _getBoxInternal<E>(name, false) as Box<E>;
 
   @override
-  LazyBox<E> lazyBox<E>(String name) =>
-      _getBoxInternal<E>(name, true) as LazyBox<E>;
+  LazyBox<E> lazyBox<E>(String name) => _getBoxInternal<E>(name, true) as LazyBox<E>;
 
   @override
   bool isBoxOpen(String name) {
@@ -222,8 +196,7 @@ class HiveImpl extends TypeRegistryImpl implements HiveInterface {
   }
 
   @override
-  Future<void> deleteBoxFromDisk(String name,
-      {String? path, String? collection}) async {
+  Future<void> deleteBoxFromDisk(String name, {String? path, String? collection}) async {
     var lowerCaseName = name.toLowerCase();
     var box = _boxes[lowerCaseName];
     if (box != null) {
@@ -248,10 +221,8 @@ class HiveImpl extends TypeRegistryImpl implements HiveInterface {
   }
 
   @override
-  Future<bool> boxExists(String name,
-      {String? path, String? collection}) async {
+  Future<bool> boxExists(String name, {String? path, String? collection}) async {
     var lowerCaseName = name.toLowerCase();
-    return await _manager.boxExists(
-        lowerCaseName, path ?? homePath, collection);
+    return await _manager.boxExists(lowerCaseName, path ?? homePath, collection);
   }
 }

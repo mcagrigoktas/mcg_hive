@@ -7,8 +7,7 @@ abstract class HiveInterface implements TypeRegistry {
   /// (Not necessary in the browser)
   void init(
     String? path, {
-    HiveStorageBackendPreference backendPreference =
-        HiveStorageBackendPreference.native,
+    HiveStorageBackendPreference backendPreference = HiveStorageBackendPreference.native,
   });
 
   /// Opens a box.
@@ -24,7 +23,6 @@ abstract class HiveInterface implements TypeRegistry {
     String? path,
     Uint8List? bytes,
     String? collection,
-    @Deprecated('Use encryptionCipher instead') List<int>? encryptionKey,
   });
 
   /// Opens a lazy box.
@@ -39,7 +37,6 @@ abstract class HiveInterface implements TypeRegistry {
     bool crashRecovery = true,
     String? path,
     String? collection,
-    @Deprecated('Use encryptionCipher instead') List<int>? encryptionKey,
   });
 
   /// Returns a previously opened box.
